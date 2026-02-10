@@ -98,7 +98,10 @@ Mappers can also look for `[@attributes]`:
 let make = (~name) => <h1>{name}</h1>
 ```
 
-**Why isn't `[@react.component]` a deriver?** It doesn't inspect any type structure — it just wraps the function.
+**Why isn't `[@react.component]` a deriver?**
+- Derivers attach to **types** and inspect their structure (fields, constructors)
+- `[@react.component]` attaches to a **function** and just wraps it
+- It doesn't care what your type looks like — it transforms the function definition
 
 ---
 
