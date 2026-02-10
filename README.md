@@ -106,14 +106,6 @@ Derivers **always** use `[@@deriving foo]` — the word `deriving` is required! 
 
 **PPX scans your entire codebase. No special syntax needed.**
 
-```ocaml
-(* You write: *)
-let msg = "hello"
-
-(* ppx_pollute transforms ALL strings: *)
-let msg = "hello 🦠"
-```
-
 Mappers can use **any** `@` syntax — `[@foo]`, `[@@bar]`, `[@@@baz]` — as long as it's not `[@@deriving]`:
 
 ```reason
@@ -129,14 +121,6 @@ In ppxlib, "deriver" is a specific API only for `[@@deriving foo]` on **type def
 
 It doesn't really "scan" — the mapper walks the AST once and reacts when it sees `[@react.component]`. ppxlib only offers 3 APIs: extender (`[%foo]`), deriver (`[@@deriving]` on types), and mapper (everything else). If your PPX doesn't fit the first two, mapper is your only option.
 
-**Rule of thumb:** Want to generate code from something that's NOT a type? Use a mapper.
-
-| Transform based on... | Use |
-|-----------------------|-----|
-| `[%foo]` | Extender |
-| Type definition | Deriver |
-| Function, module, or any other `[@attr]` | Mapper |
-
 ---
 
 ## Summary
@@ -146,11 +130,6 @@ It doesn't really "scan" — the mapper walks the AST once and reacts when it se
 | **Extender** | `[%foo]` | Replaces the marker |
 | **Deriver** | `type t = ... [@@deriving foo]` | Inspects type, generates functions |
 | **Mapper** | Nothing or `[@attr]` | Scans entire codebase |
-
-**Simple test:**
-- Uses `%`? → **Extender**
-- Uses `[@@deriving]` on a type? → **Deriver**  
-- Scans code without `%`? → **Mapper**
 
 ---
 
