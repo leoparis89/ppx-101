@@ -8,6 +8,8 @@ A simple guide to OCaml PPX using [ppxlib](https://ocaml-ppx.github.io/ppxlib/pp
 
 PPX transforms your code at compile time by modifying the AST (Abstract Syntax Tree).
 
+> **💡 View AST:** `Cmd+Shift+P` → "OCaml: Open AST Explorer" or [astexplorer.net](https://astexplorer.net/)
+
 ```ocaml
 type cat = Siamese | Persian
 [@@deriving show]
@@ -148,7 +150,3 @@ It doesn't really "scan" — the mapper walks the AST once and reacts when it se
 **Mappers:**
 - `[@react.component]` — React components
 - `ppx_pollute` — transforms all strings
-
----
-
-> **💡 View AST:** `Cmd+Shift+P` → "OCaml: Open AST Explorer" or [astexplorer.net](https://astexplorer.net/)
