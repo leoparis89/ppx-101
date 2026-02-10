@@ -61,13 +61,6 @@ type cat = Siamese | Persian
 | `[@@attr]` | Previous item | `[@@deriving yojson]` (ppx_yojson) |
 | `[@@@attr]` | Whole file | `[@@@warning "-32"]` (OCaml built-in) |
 
-### Quick comparison
-
-| Syntax | What it is | If no PPX handles it |
-|--------|------------|----------------------|
-| `[%foo]` | Hole to fill | **Compile error** |
-| `[@foo]` | Metadata | Code still works |
-
 ---
 
 ## Three types of PPX
