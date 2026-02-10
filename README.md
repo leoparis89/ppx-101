@@ -2,9 +2,7 @@
 
 This guide will walk you through the basics of building your own PPX using [ppxlib](https://ocaml-ppx.github.io/ppxlib/ppxlib/index.html). We'll build small PPXs, put them in libraries, and use them in `main.ml`.
 
-## All you need to know
-
-1. **PPX transforms the AST** (Abstract Syntax Tree)
+## **PPX transforms the AST** (Abstract Syntax Tree)
 
    **Example:** `[@@deriving show]` on a type:
 
