@@ -1,0 +1,6 @@
+(library
+ (name ppx_pollute)
+ (public_name ppx_pollute)
+ (kind ppx_rewriter)
+ (libraries ppxlib))
+

@@ -1,0 +1,10 @@
+# Local opam switch
+_opam/
+
+# Dune build artifacts
+_build/
+
+# Editor files
+*.merlin
+.merlin
+
