@@ -47,7 +47,7 @@ let x = 1
 
 ## Three types of PPX
 
-### 1. Extender
+### 1. [Extender](https://ocaml-ppx.github.io/ppxlib/ppxlib/driver.html#def_extenders)
 
 **You write `[%foo]`. PPX replaces it.**
 
@@ -61,7 +61,7 @@ No `[%getenv]` = nothing happens.
 
 ---
 
-### 2. Deriver
+### 2. [Deriver](https://ocaml-ppx.github.io/ppxlib/ppxlib/driver.html#def_derivers)
 
 **You write `[@@deriving foo]` on a type. PPX inspects the type and generates functions.**
 
