@@ -35,78 +35,89 @@ This guide will walk you through the basics of building your own PPX using [ppxl
 
 ## The 3 Types
 
+| Type | You write | PPX does |
+|------|-----------|----------|
+| **Extender** | `[%foo]` | Replaces the marker with code |
+| **Deriver** | `type t = ... [@@deriving foo]` | Inspects the type, generates functions |
+| **Mapper** | *(nothing special)* | Walks ALL your code, transforms what it finds |
+
+---
+
 ### 1. Extenders `[%name]`
 
-Replace `[%name]` with generated code.
+You write a **marker**. PPX **replaces** it.
 
 ```ocaml
-(* Reads the USER environment variable at COMPILE TIME *)
-let user = [%getenv "USER"]
-
-(* becomes (if USER=john): *)
-let user = "john"
+let user = [%getenv "USER"]    (* marker *)
+let user = "john"              (* replaced with value *)
 ```
 
-**Why `[%...]`?**
-- `[ ]` — brackets mean "this is an extension point" (a hole in the AST)
-- `%` — indicates it's an **extension** (will be replaced)
-- The PPX fills the hole with generated code
+---
 
 ### 2. Derivers `[@@deriving name]`
 
-Generate functions from type definitions.
+You write on a **type**. PPX **inspects the type structure** and generates functions.
 
 ```ocaml
 type cat = Siamese | Persian
 [@@deriving show]
-
-(* generates: *)
-let show_cat = function Siamese -> "Siamese" | Persian -> "Persian"
 ```
 
-**Why `[@@...]`?** The `@` symbol marks an **attribute**. The number of `@` determines **position**:
-
-| Syntax | Position | Attaches to |
-|--------|----------|-------------|
-| `[@attr]` | **Before** | What comes after ↓ |
-| `[@@attr]` | **After** | What came before ↑ |
-| `[@@@attr]` | Anywhere | Entire file |
+The PPX looks at the type (2 constructors: `Siamese`, `Persian`) and generates:
 
 ```ocaml
-[@react.component]          (* before → attaches to function below *)
-let make = (~name) => ...
-
-type cat = Siamese | Persian
-[@@deriving show]           (* after → attaches to type above *)
+let show_cat = function 
+  | Siamese -> "Siamese" 
+  | Persian -> "Persian"
 ```
 
-> **Note:** The `@` count is about **position**, not PPX type. `[@react.component]` is processed by a mapper, `[@@deriving]` by a deriver.
+**Key:** Derivers need a type to inspect. They generate code **based on the type's structure** (fields, constructors).
+
+---
 
 ### 3. Mappers
 
-Walk the AST and transform what they find. No special syntax in your code — just add to `bin/dune`.
+No special syntax. PPX **walks your entire codebase** and transforms what it finds.
 
-Mappers can target different things:
-- **All nodes** of a type (e.g., all strings)
-- **Specific attributes** (e.g., `[@react.component]`)
-- **Specific patterns** (e.g., `let%bind`)
-
-```dune
-(preprocess (pps ppx_pollute))
-```
-
-**Example: transform all strings**
 ```ocaml
-(* ppx_pollute hits EVERY string in your codebase *)
-print_endline "hello"       (* becomes: *) print_endline "hello 🦠"
-let name = "Alice"          (* becomes: *) let name = "Alice 🦠"
+(* You write normal code *)
+print_endline "hello"
+let name = "Alice"
+
+(* ppx_pollute transforms ALL strings *)
+print_endline "hello 🦠"
+let name = "Alice 🦠"
 ```
 
-**Example: transform specific attribute**
+Mappers can also look for **specific attributes**:
+
 ```reason
-(* reason-react looks for [@react.component] and transforms the function *)
-[@react.component]
-let make = (~name) => <h1> {React.string(name)} </h1>
+[@react.component]              (* mapper finds this attribute *)
+let make = (~name) => <h1/>     (* and transforms this function *)
+```
+
+**Key:** Mappers don't need special syntax. They scan everything.
+
+---
+
+### Attribute syntax `@` `@@` `@@@`
+
+The number of `@` determines **where** the attribute attaches:
+
+| Syntax | Position | Attaches to |
+|--------|----------|-------------|
+| `[@attr]` | Before | What comes after ↓ |
+| `[@@attr]` | After | What came before ↑ |
+| `[@@@attr]` | Anywhere | Entire file |
+
+```ocaml
+[@react.component]           (* BEFORE → attaches to function below *)
+let make = ...
+
+type cat = Siamese | Persian
+[@@deriving show]            (* AFTER → attaches to type above *)
+
+[@@@warning "-32"]           (* applies to whole file *)
 ```
 
 ---
