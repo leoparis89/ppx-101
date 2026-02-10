@@ -1,28 +1,33 @@
 # PPX 101
 
-A simple guide to OCaml PPX using [ppxlib](https://ocaml-ppx.github.io/ppxlib/ppxlib/index.html).
+This guide will walk you through the basics of building your own PPX using [ppxlib](https://ocaml-ppx.github.io/ppxlib/ppxlib/index.html). We'll build small PPXs, put them in libraries, and use them in `main.ml`.
 
----
+## All you need to know
 
-## What is PPX?
+1. **PPX transforms the AST** (Abstract Syntax Tree)
 
-PPX transforms your code at compile time by modifying the AST (Abstract Syntax Tree).
+   **Example:** `[@@deriving show]` on a type:
 
+   ```ocaml
+   type cat = Siamese | Persian
+   [@@deriving show]
+   ```
 
-```ocaml
-type cat = Siamese | Persian
-[@@deriving show]
-```
+   You've probably used this before and assumed that OCaml code containing `show_cat` was generated somewhere. But no — PPX doesn't generate source code text, it generates **AST nodes** directly.
 
-You might think this generates a file with `show_cat` somewhere. **Nope!** PPX inserts AST nodes directly — as if you wrote this yourself:
+   The PPX inserts AST nodes identical to what you'd get if you wrote this yourself:
 
-```ocaml
-let show_cat = function 
-  | Siamese -> "Siamese" 
-  | Persian -> "Persian"
-```
-> **💡 View AST:** In VS Code/Cursor: `Cmd+Shift+P` → "OCaml: Open AST Explorer"  
-> Online: [astexplorer.net](https://astexplorer.net/) (select OCaml/Reason)
+   ```ocaml
+   let show_cat = function
+     | Siamese -> "Siamese"
+     | Persian -> "Persian"
+   ```
+
+   The compiler can't tell the difference! Whether you typed it or the PPX generated it — same AST nodes.
+
+> **💡 Tip:** To view the AST of your OCaml code:
+> - In Cursor/VS Code: `Cmd+Shift+P` → "OCaml: Open AST Explorer"
+> - Online: [astexplorer.net](https://astexplorer.net/) (select OCaml)
 
 ---
 
