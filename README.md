@@ -119,7 +119,7 @@ let msg = "hello"
 let msg = "hello 🦠"
 ```
 
-Mappers can also look for `[@attributes]`:
+Mappers can use **any** `@` syntax — `[@foo]`, `[@@bar]`, `[@@@baz]` — as long as it's not `[@@deriving]`:
 
 ```reason
 [@react.component]    (* Mapper finds this, transforms the function *)
