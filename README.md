@@ -49,8 +49,8 @@ Won't compile without `ppx_blob` — the `[%blob]` is a hole that must be filled
 
 ```ocaml
 (* Code compiles even without ppx_deriving installed! *)
-type user = { name: string; age: int }
-[@@deriving show, eq]
+type cat = Siamese | Persian
+[@@deriving show]
 ```
 
 **Positions:** one, two, or three `@`
