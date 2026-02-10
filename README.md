@@ -28,15 +28,40 @@ let show_cat = function
 ### `%` = Extension point (MUST be replaced)
 
 ```ocaml
-let x = [%time]    (* Won't compile if no PPX handles this *)
+(* ppx_blob — embed file at compile time *)
+let content = [%blob "message.txt"]
+
+(* becomes *)
+let content = "Hello from the file!"
 ```
+
+Won't compile without `ppx_blob` — the `[%blob]` is a hole that must be filled.
+
+**Positions:** one or two `%`
+
+| Syntax | Level | Example |
+|--------|-------|---------|
+| `[%foo]` | Expression | `[%blob "file.txt"]` (ppx_blob) |
+| `[%%foo]` | Top-level | `[%%import "types.ml"]` (ppx_import) |
+| `let%foo` | Binding | `let%lwt x = fetch ()` (ppx_lwt) |
 
 ### `@` = Attribute (optional metadata)
 
 ```ocaml
-[@foo]             (* Code compiles even if ppx_foo doesn't exist! *)
-let x = 1
+(* Code compiles even without ppx_deriving installed! *)
+type user = { name: string; age: int }
+[@@deriving show, eq]
 ```
+
+**Positions:** one, two, or three `@`
+
+| Syntax | Attaches to | Example |
+|--------|-------------|---------|
+| `[@attr]` | Next item | `[@react.component]` (reason-react) |
+| `[@@attr]` | Previous item | `[@@deriving yojson]` (ppx_yojson) |
+| `[@@@attr]` | Whole file | `[@@@warning "-32"]` (OCaml built-in) |
+
+### Quick comparison
 
 | Syntax | What it is | If no PPX handles it |
 |--------|------------|----------------------|
@@ -128,16 +153,6 @@ It doesn't really "scan" — the mapper walks the AST once and reacts when it se
 - Uses `%`? → **Extender**
 - Uses `[@@deriving]` on a type? → **Deriver**  
 - Scans code without `%`? → **Mapper**
-
----
-
-## `@` position: one, two, or three
-
-| Syntax | Position | Example |
-|--------|----------|---------|
-| `[@attr]` | Before → attaches to what's below | `[@react.component]` |
-| `[@@attr]` | After → attaches to what's above | `[@@deriving show]` |
-| `[@@@attr]` | File-wide | `[@@@warning "-32"]` |
 
 ---
 
