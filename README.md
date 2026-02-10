@@ -101,7 +101,7 @@ let show_cat = function
   | Persian -> "Persian"
 ```
 
-Derivers **only** use `[@@deriving foo]` syntax on type definitions.
+Derivers **always** use `[@@deriving foo]` — the word `deriving` is required! Any other `[@attr]` is a mapper.
 
 **Key:** Derivers inspect type structure (fields, constructors).
 
