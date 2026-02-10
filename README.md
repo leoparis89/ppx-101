@@ -149,4 +149,3 @@ In ppxlib, "deriver" is a specific API only for `[@@deriving foo]` on **type def
 
 **Mappers:**
 - `[@react.component]` — React components
-- `ppx_pollute` — transforms all strings
