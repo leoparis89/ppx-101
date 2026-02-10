@@ -64,15 +64,23 @@ type cat = Siamese | Persian
 let show_cat = function Siamese -> "Siamese" | Persian -> "Persian"
 ```
 
-**Why `[@@...]`?** The `@` symbol marks an **attribute** (metadata). The number of `@` signs determines **where it attaches** (not how it's processed):
+**Why `[@@...]`?** The `@` symbol marks an **attribute**. The number of `@` determines **position**:
 
-| Syntax | Attaches to | Example |
-|--------|-------------|---------|
-| `[@attr]` | Nearest expression | `[@react.component]` *(processed by mapper)* |
-| `[@@attr]` | Preceding item | `[@@deriving show]` *(processed by deriver)* |
-| `[@@@attr]` | Entire file | `[@@@warning "-32"]` |
+| Syntax | Position | Attaches to |
+|--------|----------|-------------|
+| `[@attr]` | **Before** | What comes after ↓ |
+| `[@@attr]` | **After** | What came before ↑ |
+| `[@@@attr]` | Anywhere | Entire file |
 
-> **Note:** The number of `@` is about **where** the attribute attaches, not **which PPX type** processes it. `[@react.component]` uses single `@` syntax but is handled by a mapper.
+```ocaml
+[@react.component]          (* before → attaches to function below *)
+let make = (~name) => ...
+
+type cat = Siamese | Persian
+[@@deriving show]           (* after → attaches to type above *)
+```
+
+> **Note:** The `@` count is about **position**, not PPX type. `[@react.component]` is processed by a mapper, `[@@deriving]` by a deriver.
 
 ### 3. Mappers
 
