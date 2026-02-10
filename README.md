@@ -67,6 +67,14 @@ type cat = Siamese | Persian
 | `[@@attr]` | Previous item | `[@@deriving yojson]` (ppx_yojson) |
 | `[@@@attr]` | Whole file | `[@@@warning "-32"]` (OCaml built-in) |
 
+> **Note:** Not all `@` attributes are PPXs! Some are **compiler built-ins**:
+> ```ocaml
+> let[@warning "-32"] log = Log.create ()   (* Suppress warning 32 *)
+> let[@inline] add x y = x + y              (* Hint to inline *)
+> let[@tailcall] rec loop n = loop (n-1)    (* Assert tail call *)
+> ```
+> These are handled by the compiler itself, not by any PPX.
+
 ---
 
 ## Three types of PPX
