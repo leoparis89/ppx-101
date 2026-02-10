@@ -37,20 +37,22 @@ This guide will walk you through the basics of building your own PPX using [ppxl
 
 | Type | You write | PPX does |
 |------|-----------|----------|
-| **Extender** | `[%foo]` | Replaces the marker with code |
+| **Extender** | `[%foo]` or `let%foo` | Replaces/transforms the extension point |
 | **Deriver** | `type t = ... [@@deriving foo]` | Inspects the type, generates functions |
-| **Mapper** | *(nothing special)* | Walks ALL your code, transforms what it finds |
+| **Mapper** | Nothing or `[@attr]` | Scans **entire codebase**, transforms what matches |
 
 ---
 
-### 1. Extenders `[%name]`
+### 1. Extenders `[%name]` or `let%name`
 
-You write a **marker**. PPX **replaces** it.
+You write a **specific marker**. PPX finds it and **replaces/transforms** it.
 
 ```ocaml
-let user = [%getenv "USER"]    (* marker *)
-let user = "john"              (* replaced with value *)
+let user = [%getenv "USER"]    (* you write the marker *)
+let user = "john"              (* PPX replaces it *)
 ```
+
+If you don't write `[%getenv]`, nothing happens. The PPX only looks for its markers.
 
 ---
 
@@ -77,17 +79,19 @@ let show_cat = function
 
 ### 3. Mappers
 
-No special syntax. PPX **walks your entire codebase** and transforms what it finds.
+PPX **scans your entire codebase** and transforms what it finds. You don't write `%` markers.
 
 ```ocaml
-(* You write normal code *)
+(* You write normal code — no markers! *)
 print_endline "hello"
 let name = "Alice"
 
-(* ppx_pollute transforms ALL strings *)
+(* ppx_pollute scans EVERYTHING, transforms all strings *)
 print_endline "hello 🦠"
 let name = "Alice 🦠"
 ```
+
+**Key difference from extenders:** Even if you don't ask for it, the mapper runs on all your code.
 
 Mappers can also look for **specific attributes**:
 
@@ -96,7 +100,21 @@ Mappers can also look for **specific attributes**:
 let make = (~name) => <h1/>     (* and transforms this function *)
 ```
 
-**Key:** Mappers don't need special syntax. They scan everything.
+**Why is `[@react.component]` a mapper, not a deriver?**
+
+It doesn't inspect any type structure — it just wraps the function in React boilerplate. Compare:
+
+```ocaml
+(* DERIVER: must know type structure *)
+type cat = Siamese | Persian    (* "What are the constructors?" *)
+[@@deriving show]               (* Generates code for EACH constructor *)
+
+(* MAPPER: doesn't care about types *)
+[@react.component]              (* Just wraps ANY function with this attribute *)
+let make = (~name) => ...       (* No type inspection needed *)
+```
+
+**The test:** Does it need to know "what are the fields/constructors?" → Deriver. Otherwise → Mapper.
 
 ---
 
@@ -124,11 +142,11 @@ type cat = Siamese | Persian
 
 ## When to use
 
-| Need | Use |
-|------|-----|
-| Generate a value at a spot | **Extender** `[%foo]` |
-| Generate functions for a type | **Deriver** `[@@deriving foo]` |
-| Transform everything | **Mapper** *(no syntax)* |
+| Need | Use | Example |
+|------|-----|---------|
+| Generate a value at a specific spot | **Extender** `[%foo]` | `[%getenv "USER"]` → `"john"` |
+| Generate functions based on type structure | **Deriver** `[@@deriving foo]` | `type t = A \| B [@@deriving show]` |
+| Transform code without inspecting types | **Mapper** | `[@react.component]`, all strings, `let%bind` |
 
 ---
 
@@ -138,9 +156,11 @@ type cat = Siamese | Persian
 
 | PPX | Usage | What it does |
 |-----|-------|--------------|
-| `ppx_expect` | `[%expect {| output |}]` | Inline tests with expected output |
+| `ppx_expect` | `[%expect "output"]` | Inline tests with expected output |
 | `ppx_blob` | `[%blob "file.txt"]` | Embed file contents at compile time |
 | `ppx_optcomp` | `[%if ocaml_version >= (4,14)]` | Conditional compilation |
+| `ppx_let` | `let%bind x = ...` | Monadic let syntax |
+| `ppx_lwt` | `let%lwt x = ...` | Async Lwt syntax |
 
 ### Derivers
 
@@ -160,5 +180,3 @@ type cat = Siamese | Persian
 |-----|---------|--------------|
 | `ppx_pollute` | All strings | Appends 🦠 to every string |
 | `reason-react` | `[@react.component]` | Transforms function into React component |
-| `ppx_let` | `let%bind`, `let%map` | Monadic let syntax |
-| `ppx_lwt` | `let%lwt` | Async Lwt syntax |
