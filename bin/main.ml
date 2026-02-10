@@ -16,3 +16,8 @@ let () = Printf.printf "Built at: %s\n" [%time]
 
 (* Compile-time warning - you'll see this when building! *)
 let () = [%todo "Remember to add proper error handling"]
+
+(* ppx_field - access record fields by string name *)
+type person = { name: string; age: int }
+let alice = { name = "Alice"; age = 30 }
+let () = Printf.printf "Name: %s, Age: %d\n" [%field alice "name"] [%field alice "age"]

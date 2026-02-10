@@ -4,4 +4,4 @@
  (package hello)
  (libraries hello)
  (preprocess
-  (pps ppx_deriving.show ppx_hello ppx_getenv ppx_time ppx_todo)))
+  (pps ppx_deriving.show ppx_hello ppx_getenv ppx_time ppx_todo ppx_field)))

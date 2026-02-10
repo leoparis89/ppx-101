@@ -53,4 +53,9 @@
  (synopsis "PPX that emits compile-time warnings")
  (depends ocaml ppxlib))
 
+(package
+ (name ppx_field)
+ (synopsis "PPX to access record fields by string name")
+ (depends ocaml ppxlib))
+
 ; See the complete stanza docs at https://dune.readthedocs.io/en/stable/reference/dune-project/index.html
