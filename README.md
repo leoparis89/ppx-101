@@ -82,6 +82,8 @@ let user = [%getenv "USER"]
 let user = "john"
 ```
 
+Extenders **only** use `%` syntax: `[%foo]`, `[%%foo]`, `let%foo`, `match%foo`, etc.
+
 
 ---
 
@@ -98,6 +100,8 @@ let show_cat = function
   | Siamese -> "Siamese" 
   | Persian -> "Persian"
 ```
+
+Derivers **only** use `[@@deriving foo]` syntax on type definitions.
 
 **Key:** Derivers inspect type structure (fields, constructors).
 
