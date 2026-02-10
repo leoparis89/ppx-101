@@ -82,7 +82,6 @@ let user = [%getenv "USER"]
 let user = "john"
 ```
 
-No `[%getenv]` = nothing happens.
 
 ---
 
