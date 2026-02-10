@@ -64,46 +64,41 @@ type cat = Siamese | Persian
 let show_cat = function Siamese -> "Siamese" | Persian -> "Persian"
 ```
 
-**Why `[@@...]`?** The `@` symbol marks an **attribute** (metadata). The number of `@` signs determines what it attaches to:
+**Why `[@@...]`?** The `@` symbol marks an **attribute** (metadata). The number of `@` signs determines **where it attaches** (not how it's processed):
 
-#### `[@attr]` — Single: attaches to nearest expression
+| Syntax | Attaches to | Example |
+|--------|-------------|---------|
+| `[@attr]` | Nearest expression | `[@react.component]` *(processed by mapper)* |
+| `[@@attr]` | Preceding item | `[@@deriving show]` *(processed by deriver)* |
+| `[@@@attr]` | Entire file | `[@@@warning "-32"]` |
 
-```reason
-[@react.component]
-let make = (~name) => <h1> {React.string("Hello " ++ name)} </h1>
-```
-*(from [reason-react](https://github.com/reasonml/reason-react))*
-
-#### `[@@attr]` — Double: attaches to preceding item
-
-```ocaml
-type cat = Siamese | Persian
-[@@deriving show]  (* attaches to the type above *)
-```
-
-#### `[@@@attr]` — Triple: applies to entire file
-
-```ocaml
-[@@@warning "-32"]  (* disable warning for whole file *)
-
-let unused_function x = x + 1  (* no warning! *)
-```
+> **Note:** The number of `@` is about **where** the attribute attaches, not **which PPX type** processes it. `[@react.component]` uses single `@` syntax but is handled by a mapper.
 
 ### 3. Mappers
 
-Transform the entire AST automatically. No syntax — just runs when added to `bin/dune`.
-So as an experemiment imagine if we implemented a ppx that appended a string value to all the strings in you program!
+Walk the AST and transform what they find. No special syntax in your code — just add to `bin/dune`.
+
+Mappers can target different things:
+- **All nodes** of a type (e.g., all strings)
+- **Specific attributes** (e.g., `[@react.component]`)
+- **Specific patterns** (e.g., `let%bind`)
 
 ```dune
 (preprocess (pps ppx_pollute))
 ```
 
+**Example: transform all strings**
 ```ocaml
-(* EVERY string in your ENTIRE codebase gets transformed! *)
+(* ppx_pollute hits EVERY string in your codebase *)
 print_endline "hello"       (* becomes: *) print_endline "hello 🦠"
 let name = "Alice"          (* becomes: *) let name = "Alice 🦠"
-let msg = "Error: " ^ x     (* becomes: *) let msg = "Error:  🦠" ^ x
-(* No escape! 🦠 everywhere! *)
+```
+
+**Example: transform specific attribute**
+```reason
+(* reason-react looks for [@react.component] and transforms the function *)
+[@react.component]
+let make = (~name) => <h1> {React.string(name)} </h1>
 ```
 
 ---
@@ -115,3 +110,36 @@ let msg = "Error: " ^ x     (* becomes: *) let msg = "Error:  🦠" ^ x
 | Generate a value at a spot | **Extender** `[%foo]` |
 | Generate functions for a type | **Deriver** `[@@deriving foo]` |
 | Transform everything | **Mapper** *(no syntax)* |
+
+---
+
+## Popular PPXs in the wild
+
+### Extenders
+
+| PPX | Usage | What it does |
+|-----|-------|--------------|
+| `ppx_expect` | `[%expect {| output |}]` | Inline tests with expected output |
+| `ppx_blob` | `[%blob "file.txt"]` | Embed file contents at compile time |
+| `ppx_optcomp` | `[%if ocaml_version >= (4,14)]` | Conditional compilation |
+
+### Derivers
+
+| PPX | Usage | What it generates |
+|-----|-------|-------------------|
+| `ppx_deriving.show` | `[@@deriving show]` | `show_t : t -> string` |
+| `ppx_deriving.eq` | `[@@deriving eq]` | `equal : t -> t -> bool` |
+| `ppx_deriving.ord` | `[@@deriving ord]` | `compare : t -> t -> int` |
+| `ppx_yojson_conv` | `[@@deriving yojson]` | JSON serialization |
+| `ppx_sexp_conv` | `[@@deriving sexp]` | S-expression serialization |
+| `ppx_compare` | `[@@deriving compare]` | Jane Street's compare |
+| `ppx_hash` | `[@@deriving hash]` | Hash functions |
+
+### Mappers
+
+| PPX | Targets | What it does |
+|-----|---------|--------------|
+| `ppx_pollute` | All strings | Appends 🦠 to every string |
+| `reason-react` | `[@react.component]` | Transforms function into React component |
+| `ppx_let` | `let%bind`, `let%map` | Monadic let syntax |
+| `ppx_lwt` | `let%lwt` | Async Lwt syntax |
