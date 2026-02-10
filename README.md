@@ -25,7 +25,7 @@ let show_cat = function
 
 ## Two syntax markers
 
-### `%` = Extension point (MUST be replaced)
+### `%` = Extension point
 
 ```ocaml
 (* ppx_blob — embed file at compile time *)
@@ -45,7 +45,7 @@ Won't compile without `ppx_blob` — the `[%blob]` is a hole that must be filled
 | `[%%foo]` | Top-level | `[%%raw "console.log('hi')"]` (js_of_ocaml) |
 | `let%foo` | Binding | `let%lwt x = fetch ()` (ppx_lwt) |
 
-### `@` = Attribute (optional metadata)
+### `@` = Attribute
 
 ```ocaml
 (* Code compiles even without ppx_deriving installed! *)
@@ -77,9 +77,11 @@ type cat = Siamese | Persian
 **You write `[%foo]`. PPX replaces it.**
 
 ```ocaml
-let user = [%getenv "USER"]
+(* ppx_blob — embed file at compile time *)
+let content = [%blob "message.txt"]
+
 (* becomes *)
-let user = "john"
+let content = "Hello from the file!"
 ```
 
 Extenders **only** use `%` syntax: `[%foo]`, `[%%foo]`, `let%foo`, `match%foo`, etc.
