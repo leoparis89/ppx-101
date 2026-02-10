@@ -8,7 +8,6 @@ A simple guide to OCaml PPX using [ppxlib](https://ocaml-ppx.github.io/ppxlib/pp
 
 PPX transforms your code at compile time by modifying the AST (Abstract Syntax Tree).
 
-> **💡 View AST:** `Cmd+Shift+P` → "OCaml: Open AST Explorer" or [astexplorer.net](https://astexplorer.net/)
 
 ```ocaml
 type cat = Siamese | Persian
@@ -22,6 +21,8 @@ let show_cat = function
   | Siamese -> "Siamese" 
   | Persian -> "Persian"
 ```
+> **💡 View AST:** In VS Code/Cursor: `Cmd+Shift+P` → "OCaml: Open AST Explorer"  
+> Online: [astexplorer.net](https://astexplorer.net/) (select OCaml/Reason)
 
 ---
 
