@@ -42,7 +42,7 @@ Won't compile without `ppx_blob` — the `[%blob]` is a hole that must be filled
 | Syntax | Level | Example |
 |--------|-------|---------|
 | `[%foo]` | Expression | `[%blob "file.txt"]` (ppx_blob) |
-| `[%%foo]` | Top-level | `[%%import "types.ml"]` (ppx_import) |
+| `[%%foo]` | Top-level | `[%%raw "console.log('hi')"]` (js_of_ocaml) |
 | `let%foo` | Binding | `let%lwt x = fetch ()` (ppx_lwt) |
 
 ### `@` = Attribute (optional metadata)
