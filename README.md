@@ -99,9 +99,20 @@ let make = (~name) => <h1>{name}</h1>
 ```
 
 **Why isn't `[@react.component]` a deriver?**
-- Derivers attach to **types** and inspect their structure (fields, constructors)
-- `[@react.component]` attaches to a **function** and just wraps it
-- It doesn't care what your type looks like — it transforms the function definition
+
+In ppxlib, "deriver" is a specific API only for `[@@deriving foo]` on **type definitions**. Since `[@react.component]` attaches to a function (not a type), it can't use the deriver API — so it uses the mapper API instead.
+
+**Why scan the whole codebase for something localized?**
+
+It doesn't really "scan" — the mapper walks the AST once and reacts when it sees `[@react.component]`. ppxlib only offers 3 APIs: extender (`[%foo]`), deriver (`[@@deriving]` on types), and mapper (everything else). If your PPX doesn't fit the first two, mapper is your only option.
+
+**Rule of thumb:** Want to generate code from something that's NOT a type? Use a mapper.
+
+| Transform based on... | Use |
+|-----------------------|-----|
+| `[%foo]` | Extender |
+| Type definition | Deriver |
+| Function, module, or any other `[@attr]` | Mapper |
 
 ---
 
