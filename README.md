@@ -69,9 +69,10 @@ type cat = Siamese | Persian
 
 > **Note:** Not all `@` attributes are PPXs! Some are **compiler built-ins**:
 > ```ocaml
-> let[@warning "-32"] log = Log.create ()   (* Suppress warning 32 *)
-> let[@inline] add x y = x + y              (* Hint to inline *)
-> let[@tailcall] rec loop n = loop (n-1)    (* Assert tail call *)
+> let[@warning "-32"] log = Log.create ()   (* Suppress for this binding only *)
+> let[@inline] add x y = x + y              (* Hint to inline this function *)
+> let[@tailcall] rec loop n = loop (n-1)    (* Assert this call is tail-recursive *)
+> [@@@warning "-45"]                        (* Suppress for entire file *)
 > ```
 > These are handled by the compiler itself, not by any PPX.
 
