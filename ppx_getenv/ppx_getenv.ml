@@ -8,7 +8,7 @@ open Ppxlib
    Into:       "levkowalski" (at compile time!)
 *)
 
-let expand ~ctxt var_name =
+let expand ~ctxt (var_name: string) =
   let loc = Expansion_context.Extension.extension_point_loc ctxt in
   match Sys.getenv_opt var_name with
   | Some value -> 
