@@ -58,4 +58,9 @@
  (synopsis "PPX to access record fields by string name")
  (depends ocaml ppxlib))
 
+(package
+ (name ppx_await)
+ (synopsis "PPX for async/await syntax with Lwt")
+ (depends ocaml ppxlib))
+
 ; See the complete stanza docs at https://dune.readthedocs.io/en/stable/reference/dune-project/index.html

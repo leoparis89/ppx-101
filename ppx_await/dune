@@ -1,13 +1,7 @@
 (library
- (name ppx_hello)
- (public_name ppx_hello)
+ (name ppx_await)
+ (public_name ppx_await)
  (kind ppx_rewriter)
  (libraries ppxlib)
  (preprocess (pps ppxlib.metaquot)))
-
-
-
-
-
-
 

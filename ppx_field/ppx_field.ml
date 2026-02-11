@@ -9,7 +9,7 @@ open Ppxlib
    [%field record "name"]  ->  record.name
 *)
 
-let expand ~ctxt record field_name =
+let expand ~ctxt record (field_name: string) =
   let loc = Expansion_context.Extension.extension_point_loc ctxt in
   (* Build: record.field_name *)
   Ast_builder.Default.pexp_field ~loc record

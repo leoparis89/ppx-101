@@ -2,6 +2,6 @@
  (public_name hello)
  (name main)
  (package hello)
- (libraries hello)
+ (libraries hello lwt)
  (preprocess
-  (pps ppx_deriving.show ppx_hello ppx_getenv ppx_time ppx_todo ppx_field)))
+  (pps ppx_deriving.show ppx_hello ppx_getenv ppx_time ppx_todo ppx_field ppx_await)))
