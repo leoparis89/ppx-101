@@ -1,12 +1,5 @@
 (library
  (name ppx_todo)
- (public_name ppx_todo)
  (kind ppx_rewriter)
  (libraries ppxlib)
- (preprocess
-  (pps ppxlib.metaquot)))
-
-
-
-
-
+ (preprocess (pps ppxlib.metaquot)))
